@@ -1,0 +1,40 @@
+language: python
+python:
+  - "2.7"
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - pip install -r requirements.txt
+    - stage: test
+      services:
+        - postgresql
+      before_script: 
+        - psql -c "CREATE DATABASE teststudentapi;" -U postgres
+        - psql -c "CREATE USER testuser WITH PASSWORD '1234';" -U postgres
+      script:
+        - export ENVIRONMENT=testing
+        - export TEST_DATABASE_URI="postgres://testuser:1234@localhost:5432/teststudentapi"
+       
+    - stage: deploy
+      before_script:
+        - openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
+        - eval "$(ssh-agent -s)"
+        - chmod 600 /tmp/deploy_rsa
+        - ssh-add /tmp/deploy_rsa
+      - provider: script
+        skip_cleanup: true
+        script:
+          - scp  -o StrictHostKeyChecking=no deploy.sh $EC2_TEST_USER@$EC2_TEST_MACHINE:. 
+          - ssh  -o StrictHostKeyChecking=no $EC2_TEST_USER@$EC2_TEST_MACHINE '/bin/bash ./deploy.sh testing $DATABASE_URI'
+        on:
+          branch: develop
+      - provider: script
+        skip_cleanup: true
+        script:
+          - scp  -o StrictHostKeyChecking=no deploy.sh $EC2_USER@$EC2_MACHINE:. 
+          - ssh  -o StrictHostKeyChecking=no $EC2_USER@$EC2_MACHINE '/bin/bash ./deploy.sh production $DATABASE_URI'
+        on:
+          branch: master
+
