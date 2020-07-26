@@ -16,6 +16,9 @@ jobs:
       script:
         - export ENVIRONMENT=testing
         - export TEST_DATABASE_URI="postgres://testuser:1234@localhost:5432/teststudentapi"
+        - python manage.py db init
+        - python manage.py db migrate
+        - python manage.py db upgrade
     - stage: deploy
       before_script:
         - openssl aes-256-cbc -K $encrypted_db2095f63ba3_key -iv $encrypted_db2095f63ba3_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
