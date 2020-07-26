@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ -d locus ]; then
+if [ -d ci_test ]; then
 	echo "change workdir"
-	cd locus
+	cd ci_test
 	echo "Pulling from git"
 	git pull
 else
