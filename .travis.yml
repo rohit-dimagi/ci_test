@@ -27,6 +27,6 @@ jobs:
         - ssh-add /tmp/deploy_rsa
       script:
           - scp  -o StrictHostKeyChecking=no deploy.sh $EC2_USER@$EC2_MACHINE:. 
-          - ssh  -o StrictHostKeyChecking=no $EC2_USER@$EC2_MACHINE '/bin/bash ./deploy.sh production $DATABASE_URI'
+          - ssh  -o StrictHostKeyChecking=no $EC2_USER@$EC2_MACHINE 'source ./deploy.sh production $DATABASE_URI'
       on:
         branch: master
