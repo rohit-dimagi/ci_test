@@ -25,9 +25,8 @@ jobs:
         - eval "$(ssh-agent -s)"
         - chmod 600 /tmp/deploy_rsa
         - ssh-add /tmp/deploy_rsa
-      - provider: script
-        script:
+      script:
           - scp  -o StrictHostKeyChecking=no deploy.sh $EC2_USER@$EC2_MACHINE:. 
           - ssh  -o StrictHostKeyChecking=no $EC2_USER@$EC2_MACHINE '/bin/bash ./deploy.sh production $DATABASE_URI'
-        on:
-          branch: master
+      on:
+        branch: master
