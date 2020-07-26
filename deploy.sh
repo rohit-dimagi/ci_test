@@ -9,7 +9,7 @@ else
 	echo "Pulling from git"
 	git clone https://github.com/rohit-dimagi/ci_test/
 	echo "change workdir"
-	cd locus
+	cd ci_test
 fi
 
 echo "Install requirements"
